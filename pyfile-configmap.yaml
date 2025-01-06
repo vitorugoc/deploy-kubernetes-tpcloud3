@@ -1,0 +1,44 @@
+apiVersion: v1
+data:
+  pyfile: |
+    import json
+    from typing import Any, Dict
+
+    def handler(input: Dict[str, Any], context: object) -> Dict[str, Any]:
+        env = context.env or {}
+        cpu_count = len([key for key in input.keys() if key.startswith("cpu_percent-")])
+
+        net_bytes_sent = input["net_io_counters_eth0-bytes_sent1"]
+        net_total = net_bytes_sent + input["net_io_counters_eth0-bytes_recv1"]
+        percent_network_egress = (net_bytes_sent / net_total) * 100 if net_total > 0 else 0
+
+        cached = input["virtual_memory-cached"]
+        buffers = input["virtual_memory-buffers"]
+        total_memory = input["virtual_memory-total"]
+        percent_memory_cache = ((cached + buffers) / total_memory) * 100
+
+        cpu_averages = {}
+        for i in range(cpu_count):
+            key = f"cpu_percent-{i}"
+            prev_avg_key = f"avg-util-cpu{i}-60sec"
+            prev_avg = env.get(prev_avg_key, 0)
+
+            current_cpu = input[key]
+            avg_cpu = (prev_avg * 59 + current_cpu) / 60
+            cpu_averages[prev_avg_key] = avg_cpu
+
+        env.update(cpu_averages)
+
+        result = {
+            "percent-network-egress": percent_network_egress,
+            "percent-memory-cache": percent_memory_cache,
+            **cpu_averages,
+        }
+        return result
+kind: ConfigMap
+metadata:
+  creationTimestamp: "2025-01-03T13:36:04Z"
+  name: pyfile
+  namespace: vitorcruz
+  resourceVersion: "19856"
+  uid: 23276ab0-113e-4aa0-8e96-e6dab16d2fa6

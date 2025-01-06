@@ -1,0 +1,10 @@
+apiVersion: v1
+data:
+  REDIS_OUTPUT_KEY: 2021039514-proj3-output
+kind: ConfigMap
+metadata:
+  creationTimestamp: "2025-01-03T13:37:45Z"
+  name: outputkey
+  namespace: vitorcruz
+  resourceVersion: "19931"
+  uid: 3000ccc5-4967-4b75-b34c-48f7e1c7909a
