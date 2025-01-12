@@ -31,7 +31,7 @@ spec:
               subPath: usermodule.zip
           env:
             - name: REDIS_HOST
-              value: "redis"
+              value: "192.168.121.48"
             - name: REDIS_PORT
               value: "6379"
             - name: REDIS_INPUT_KEY
