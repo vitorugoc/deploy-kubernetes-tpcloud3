@@ -15,12 +15,12 @@ spec:
     spec:
       containers:
         - name: dashboard
-          image: vitorugoc/dashboard:0.1
+          image: vitorugoc/dashboard:0.4
           ports:
             - containerPort: 8501
           env:
             - name: REDIS_HOST
-              value: "192.168.121.48"
+              value: "redis"
             - name: REDIS_PORT
               value: "6379"
 

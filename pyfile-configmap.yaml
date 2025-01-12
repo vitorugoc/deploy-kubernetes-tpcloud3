@@ -5,11 +5,11 @@ data:
     from typing import Any, Dict
 
     def handler(input: Dict[str, Any], context: object) -> Dict[str, Any]:
-        env = context.env or {}
+        env = context.get("env", {})
         cpu_count = len([key for key in input.keys() if key.startswith("cpu_percent-")])
 
-        net_bytes_sent = input["net_io_counters_eth0-bytes_sent1"]
-        net_total = net_bytes_sent + input["net_io_counters_eth0-bytes_recv1"]
+        net_bytes_sent = input["net_io_counters_eth0-bytes_sent"]
+        net_total = net_bytes_sent + input["net_io_counters_eth0-bytes_recv"]
         percent_network_egress = (net_bytes_sent / net_total) * 100 if net_total > 0 else 0
 
         cached = input["virtual_memory-cached"]
@@ -31,7 +31,7 @@ data:
 
         result = {
             "percent-network-egress": percent_network_egress,
-            "percent-memory-cache": percent_memory_cache,
+            "percent-memory-caching": percent_memory_cache,
             **cpu_averages,
         }
         return result
